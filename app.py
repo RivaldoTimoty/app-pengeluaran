@@ -4,14 +4,12 @@ import plotly.express as px
 from datetime import datetime
 import os
 
-# --- KONFIGURASI HALAMAN ---
 st.set_page_config(
     page_title="Dashboard Pengeluaran Pribadi",
     page_icon="💰",
     layout="wide"
 )
 
-# --- FUNGSI UNTUK MEMUAT DAN MENYIMPAN DATA ---
 NAMA_FILE_DATA = "data_pengeluaran.csv"
 
 
@@ -19,14 +17,12 @@ def muat_data():
     """Memuat data pengeluaran dari file CSV. Jika file tidak ada, buat DataFrame kosong."""
     if os.path.exists(NAMA_FILE_DATA):
         try:
-            # Baca CSV dan langsung konversi kolom Tanggal
             df = pd.read_csv(NAMA_FILE_DATA, parse_dates=['Tanggal'])
         except pd.errors.EmptyDataError:
             return pd.DataFrame(columns=["Tanggal", "Jumlah", "Kategori", "Deskripsi"])
     else:
         return pd.DataFrame(columns=["Tanggal", "Jumlah", "Kategori", "Deskripsi"])
     
-    # Pastikan tipe data sudah benar setelah dibaca
     df['Tanggal'] = pd.to_datetime(df['Tanggal'])
     return df
 
@@ -36,9 +32,9 @@ def simpan_data(df):
 
 # --- JUDUL APLIKASI ---
 st.title("📊 Dashboard Pengeluaran Pribadi")
-st.write("Aplikasi sederhana untuk melacak dan menganalisis pengeluaran Anda.")
+st.write("Aplikasi sederhana untuk melacak dan menganalisis pengeluaran.")
 
-# --- MEMUAT DATA ---
+
 df = muat_data()
 
 # --- SIDEBAR UNTUK INPUT DATA ---
@@ -56,7 +52,7 @@ with st.sidebar.form("form_pengeluaran", clear_on_submit=True):
     if tombol_submit:
         if jumlah > 0:
             data_baru = pd.DataFrame([{
-                "Tanggal": pd.to_datetime(tanggal), # Pastikan format datetime saat menambah
+                "Tanggal": pd.to_datetime(tanggal), 
                 "Jumlah": jumlah,
                 "Kategori": kategori,
                 "Deskripsi": deskripsi
@@ -68,20 +64,14 @@ with st.sidebar.form("form_pengeluaran", clear_on_submit=True):
         else:
             st.sidebar.error("Jumlah harus lebih besar dari nol.")
 
-# --- PERBAIKAN DIMULAI DI SINI ---
-# Cek apakah DataFrame memiliki data sebelum melakukan analisis
 if not df.empty:
     st.header("🔍 Filter & Analisis")
     df['TahunBulan'] = df['Tanggal'].dt.to_period('M').astype(str)
     
-    # Ambil daftar bulan unik dan urutkan dari yang terbaru
     daftar_bulan = sorted(df['TahunBulan'].unique(), reverse=True)
     bulan_terpilih = st.selectbox("Pilih Bulan untuk Analisis:", options=daftar_bulan)
 
-    # Filter DataFrame berdasarkan bulan yang dipilih
     df_filtered = df[df['TahunBulan'] == bulan_terpilih].copy()
-
-    # --- RINGKASAN PENGELUARAN (BERDASARKAN BULAN TERPILIH) ---
     if not df_filtered.empty:
         total_pengeluaran_bulan = df_filtered['Jumlah'].sum()
         rata_rata_harian = df_filtered.groupby(df_filtered['Tanggal'].dt.date)['Jumlah'].sum().mean()
@@ -122,13 +112,11 @@ if not df.empty:
             fig_line.update_layout(xaxis_title='Tanggal', yaxis_title='Total Pengeluaran (Rp)')
             st.plotly_chart(fig_line, use_container_width=True)
 
-    # --- MENAMPILKAN DATA MENTAH DENGAN FITUR HAPUS ---
     st.markdown("---")
     st.subheader("📖 Semua Data Pengeluaran")
     
-    # Buat DataFrame dengan indeks untuk memudahkan penghapusan
     df_display = df.copy()
-    df_display.insert(0, 'ID', range(1, 1 + len(df_display))) # Tambahkan kolom ID
+    df_display.insert(0, 'ID', range(1, 1 + len(df_display))) 
     
     st.dataframe(df_display.sort_values(by="Tanggal", ascending=False), use_container_width=True, hide_index=True)
 
@@ -141,11 +129,7 @@ if not df.empty:
 
         if tombol_hapus:
             if id_untuk_hapus > 0 and id_untuk_hapus <= len(df_display):
-                # Dapatkan indeks asli dari baris yang akan dihapus berdasarkan ID yang ditampilkan
-                # Karena kita menambahkan 'ID' dari 1, kita perlu menguranginya untuk mendapatkan indeks berbasis 0
                 indeks_untuk_hapus = id_untuk_hapus - 1
-                
-                # Gunakan iloc untuk menghapus baris berdasarkan posisi integer
                 df = df.drop(df.index[indeks_untuk_hapus]).reset_index(drop=True)
                 simpan_data(df)
                 st.success(f"Pengeluaran dengan ID {id_untuk_hapus} berhasil dihapus!")
@@ -154,7 +138,7 @@ if not df.empty:
                 st.error("ID tidak valid. Mohon masukkan ID yang benar.")
 
 
-    # Menambahkan tombol untuk download data
+    #  Untuk download data
     csv = df.to_csv(index=False).encode('utf-8')
     st.download_button(
        "⬇️ Unduh Data sebagai CSV",
