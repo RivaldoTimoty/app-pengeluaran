@@ -25,8 +25,6 @@ Deploy Aplikasi dengan Streamlit
 
 ### Langkah 3: Deploy Aplikasi Anda ke Streamlit Community Cloud
 
-Streamlit Community Cloud adalah cara termudah dan tercepat untuk membuat aplikasi Streamlit Anda *online* dan bisa digunakan oleh siapa pun.
-
 1.  **Kunjungi Streamlit Community Cloud:** Buka [share.streamlit.io](https://share.streamlit.io/) di browser Anda.
 2.  **Masuk dengan GitHub:** Klik "Sign up with GitHub" dan berikan otorisasi jika diminta. Ini akan menghubungkan akun GitHub Anda dengan Streamlit.
 3.  **Deploy Aplikasi Baru:**
