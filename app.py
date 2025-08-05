@@ -30,14 +30,12 @@ def simpan_data(df):
     """Menyimpan DataFrame ke file CSV."""
     df.to_csv(NAMA_FILE_DATA, index=False)
 
-# --- JUDUL APLIKASI ---
 st.title("📊 Dashboard Pengeluaran Pribadi")
 st.write("Aplikasi sederhana untuk melacak dan menganalisis pengeluaran.")
 
 
 df = muat_data()
 
-# --- SIDEBAR UNTUK INPUT DATA ---
 st.sidebar.header("➕ Tambah Pengeluaran Baru")
 
 with st.sidebar.form("form_pengeluaran", clear_on_submit=True):
@@ -83,8 +81,7 @@ if not df.empty:
         col1.metric("Total Pengeluaran", f"Rp {total_pengeluaran_bulan:,.2f}")
         col2.metric("Rata-rata Harian", f"Rp {rata_rata_harian:,.2f}")
         col3.metric(f"Kategori Teratas: {kategori_teratas}", f"Rp {jumlah_kategori_teratas:,.2f}")
-    
-    # --- VISUALISASI DATA ---
+
     st.markdown("---")
     if not df_filtered.empty:
         col_viz1, col_viz2 = st.columns(2)
@@ -120,7 +117,6 @@ if not df.empty:
     
     st.dataframe(df_display.sort_values(by="Tanggal", ascending=False), use_container_width=True, hide_index=True)
 
-    # Form untuk menghapus data
     st.markdown("---")
     st.subheader("🗑️ Hapus Data Pengeluaran")
     with st.form("form_hapus_pengeluaran"):
@@ -138,7 +134,6 @@ if not df.empty:
                 st.error("ID tidak valid. Mohon masukkan ID yang benar.")
 
 
-    #  Untuk download data
     csv = df.to_csv(index=False).encode('utf-8')
     st.download_button(
        "⬇️ Unduh Data sebagai CSV",
@@ -148,5 +143,4 @@ if not df.empty:
        key='download-csv'
     )
 else:
-    # Tampilkan pesan ini jika tidak ada data sama sekali
     st.info("👋 Selamat datang! Belum ada data pengeluaran. Silakan tambahkan pengeluaran baru melalui form di sidebar kiri untuk memulai.")
